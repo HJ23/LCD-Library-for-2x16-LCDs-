@@ -7,10 +7,13 @@
 #define SETTING_PORT PORTY
 #define uchar unsigned char
 
+unsigned char limit=0;
 
 void initialize();
 void send_command(uchar command);
 void display(uchar data);
+void new_line();
+void clear_display();
 
 void initialize(){
 	SETTING_PORT&=~(1<<E);
@@ -28,12 +31,20 @@ void initialize(){
 
 
 void display(uchar data){
+	if(limit==16)
+	   new_line();
+	else if(limit==32){
+	   clear_display();
+	   limit=0;
+	}
+	
 	PORT_DATA=data;
 	SETTING_PORT|=1<<RS;
 	SETTING_PORT|=1<<E;
 	_delay_us(1000);
 	SETTING_PORT&=~(1<<E);
 	_delay_us(1000);
+	limit++;
 }
 
 void send_command(uchar command){
@@ -57,6 +68,8 @@ void new_line(){
 	_delay_us(100);
 	
 }
+
+
 
 
 
